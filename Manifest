@@ -1,0 +1,10 @@
+.gitignore
+LICENSE
+Manifest
+Rakefile
+docs.watchr
+lib/holygrail.rb
+rails/init.rb
+specs.watchr
+test/holygrail_test.rb
+test/test_helper.rb
