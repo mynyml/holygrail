@@ -4,6 +4,7 @@ Manifest
 README.md
 Rakefile
 docs.watchr
+holygrail.gemspec
 lib/holygrail.rb
 rails/init.rb
 specs.watchr
