@@ -31,11 +31,20 @@ class HolyGrailsControllerTest < ActionController::TestCase
   end
 
   test "every test is a different context" do
-    js("function foo() { return 'bar' }")
-    assert_equal 'bar', js('foo()')
+    js("foo = 'bar'")
+    assert_equal 'bar', js('foo')
   end
   test "every test is a different context 2" do
-    assert_raises(Johnson::Error) { js('foo()') }
+    assert_raises(Johnson::Error) { js('foo') }
+  end
+
+  test "response context doesn't bleed into next response" do
+    get :foo
+    js("foo = 'bar'")
+    assert_equal 'bar', js('foo')
+
+    get :foo
+    assert_raises(Johnson::Error) { js('foo') }
   end
 
   test "DOM" do

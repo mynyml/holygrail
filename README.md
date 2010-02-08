@@ -22,7 +22,7 @@ and add it to your environment
 Examples
 --------
 
-Use the `js` method in your functional tests to execute javascript within the context of a view
+Use the `js` method in your functional tests to execute javascript within the context of a view (the last response body)
 
     class PeopleControllerTest < ActionController::TestCase
 
