@@ -22,7 +22,9 @@ and add it to your environment
 Examples
 --------
 
-Use the `js` method in your functional tests to execute javascript within the context of a view (the last response body)
+Use the `js` method in your functional tests to execute javascript within the
+context of a view (the last response body). `js` returns the value of the last
+javascript statement, cast to an equivalent ruby object.
 
     class PeopleControllerTest < ActionController::TestCase
 
