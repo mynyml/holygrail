@@ -23,7 +23,6 @@ end
 class HolyGrailsControllerTest < ActionController::TestCase
   test "api" do
     assert_respond_to self, :execute_javascript
-    assert_respond_to self, :execute_js
     assert_respond_to self, :js
   end
 
