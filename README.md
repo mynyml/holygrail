@@ -7,7 +7,7 @@ Summary
 The Holy Grail of testing for front-end development; execute browser-less,
 console-based, javascript + DOM code right from within your Rails test suite.
 
-HolyGrail is a [Harmony][11] plugin for Ruby on Rails.
+HolyGrail is a [Harmony][20] plugin for Ruby on Rails.
 
 Install
 -------
@@ -40,7 +40,7 @@ Use the `js` method in your functional tests to execute javascript within the co
 Acknowledgement
 ---------------
 
-HolyGrail is based on [Harmony][11], which in turn is a very thin DSL wrapper
+HolyGrail is based on [Harmony][20], which in turn is a very thin DSL wrapper
 around two **amazing** libs, [Johnson][1] and [Envjs][2]. The
 authors/contributors of those libs have been doing a huge amount of great work
 for quite a while, so please go recommend them on WorkingWithRails right now
@@ -49,7 +49,7 @@ and/or follow them on github:
   [jbarnette][3], [tenderlove][4], [smparkes][5], [wycats][6], [matthewd][7], [thatcher][8], [jeresig][9]
 
 Special thanks go to [smparkes][10] for his patient help, and for providing the
-last bit of glue that made everything work together.
+last bit of [glue][11] that made [everything work together][12].
 
 TODO
 ----
@@ -75,5 +75,7 @@ Links
 [8]:  http://github.com/thatcher/
 [9]:  http://ejohn.org/
 [10]: http://github.com/smparkes/
-[11]: http://github.com/mynyml/harmony
+[11]: http://github.com/smparkes/env-js/commit/49abe259813a505b0761e6d31dde671344b5bc87#L0R279
+[12]: http://groups.google.com/group/envjs/msg/4ac719f7db7912f5
+[20]: http://github.com/mynyml/harmony
 
