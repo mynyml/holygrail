@@ -17,7 +17,6 @@ module ActionController
       #     js('foo') #=> "Error: foo is not defined"
       #
       # @private
-      #
       def process(*args) #:nodoc:
         @__page = nil
         super
@@ -32,16 +31,20 @@ module ActionController
       #       assert_equal 'People: index', js('document.title')
       #     end
       #
-      # @param [String] code javascript code to evaluate
-      # @raise [Johnson::Error] javascript code exception
-      # @return [Object] return value of last javascript statement, cast to an
-      #   equivalent ruby object
+      # @param [String]
+      #   code javascript code to evaluate
       #
-      def execute_javascript(code)
+      # @return [Object]
+      #   value of last javascript statement, cast to an equivalent ruby object
+      #
+      # @raise [Johnson::Error]
+      #   javascript code exception
+      #
+      def js(code)
         @__page ||= Harmony::Page.new(@response.body.to_s)
         @__page.execute_js(code)
       end
-      alias :js :execute_javascript
+      alias :execute_javascript :js
     end
   end
 end
