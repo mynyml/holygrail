@@ -1,6 +1,7 @@
 .gitignore
 LICENSE
 Manifest
+README.md
 Rakefile
 docs.watchr
 lib/holygrail.rb
