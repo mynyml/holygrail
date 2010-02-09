@@ -42,16 +42,16 @@ javascript statement, cast to an equivalent ruby object.
 Acknowledgement
 ---------------
 
-HolyGrail is based on [Harmony][20], which in turn is a very thin DSL wrapper
-around two **amazing** libs, [Johnson][1] and [Envjs][2]. The
-authors/contributors of those libs have been doing a huge amount of great work
-for quite a while, so please go recommend them on WorkingWithRails right now
-and/or follow them on github:
+HolyGrail is based on [Harmony][20], which in turn is a thin DSL wrapper around
+three **amazing** libs, [Johnson][1], [env.js][30] and [Envjs][2] . The authors
+of those libs have been doing a huge amount of great work for quite a while, so
+please go recommend them on WorkingWithRails right now and/or follow them on
+github:
 
   [jbarnette][3], [tenderlove][4], [smparkes][5], [wycats][6], [matthewd][7], [thatcher][8], [jeresig][9]
 
 Special thanks go to [smparkes][10] for his patient help, and for providing the
-last bit of [glue][11] that made [everything work together][12].
+last puzzle pieces that made [everything][12] [work][11] [together][13].
 
 TODO
 ----
@@ -80,4 +80,4 @@ Links
 [11]: http://github.com/smparkes/env-js/commit/49abe259813a505b0761e6d31dde671344b5bc87#L0R279
 [12]: http://groups.google.com/group/envjs/msg/4ac719f7db7912f5
 [20]: http://github.com/mynyml/harmony
-
+[30]: http://github.com/thatcher/env-js
