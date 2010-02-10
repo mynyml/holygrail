@@ -9,16 +9,6 @@ console-based, javascript + DOM code right from within your Rails test suite.
 
 HolyGrail is a [Harmony][20] plugin for Ruby on Rails.
 
-Install
--------
-Install the gem
-
-    gem install holygrail
-
-and add it to your environment
-
-    config.gem "holygrail"
-
 Examples
 --------
 
@@ -38,6 +28,22 @@ javascript statement, cast to an equivalent ruby object.
         assert_equal  2,    js("document.getElementsByTagName('div').length")
       end
     end
+
+Install
+-------
+
+Install the gem
+
+    # Note: there's a gem dependency bug in rubygems currently, so we'll have
+    # to install some dependencies manually. This will be fixed soon.
+    gem install stackdeck
+    gem install johnson -v "2.0.0.pre0" #exact version matters
+
+    gem install holygrail
+
+and add it to your environment
+
+    config.gem "holygrail"
 
 Acknowledgement
 ---------------
@@ -79,5 +85,6 @@ Links
 [10]: http://github.com/smparkes/
 [11]: http://github.com/smparkes/env-js/commit/49abe259813a505b0761e6d31dde671344b5bc87#L0R279
 [12]: http://groups.google.com/group/envjs/msg/4ac719f7db7912f5
+[13]: http://gemcutter.org/gems/envjs
 [20]: http://github.com/mynyml/harmony
 [30]: http://github.com/thatcher/env-js
