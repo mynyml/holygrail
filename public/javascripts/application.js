@@ -1,0 +1,1 @@
+function holy() { return 'grail'; }

@@ -41,10 +41,28 @@ module ActionController
       #   javascript code exception
       #
       def js(code)
-        @__page ||= Harmony::Page.new(@response.body.to_s)
+        @__page ||= Harmony::Page.new(rewrite_script_paths(@response.body.to_s))
         @__page.execute_js(code)
       end
       alias :execute_javascript :js
+
+      private
+
+      # Rewrite relative src paths in <script> tags
+      #
+      # <script src> tags point to js files relative to public/ directory.
+      # Harmony needs paths to the local files instead so that it can load
+      # them.
+      #
+      # @param [String] body
+      #   document for which to rewrite script paths
+      #
+      # @return [String]
+      #   updated body
+      #
+      def rewrite_script_paths(body)
+        body.gsub(%r%src=("|')/?javascripts/(.*)("|')%) { %|src=#{$1}%s#{$1}"| % Rails.root.join("public/javascripts/#{$2}") }
+      end
     end
   end
 end
