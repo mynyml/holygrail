@@ -1,5 +1,6 @@
 require 'test/unit'
 require 'action_controller'
+require 'action_controller/integration'
 
 begin require 'ruby-debug'; rescue LoadError; end
 begin require 'redgreen';   rescue LoadError; end

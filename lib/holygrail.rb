@@ -1,5 +1,19 @@
 require 'harmony'
 
+class Object
+  def self.holygrail_xhr_data=(value)
+    $holygrail_xhr_data = value
+  end
+
+  def self.xhr_reply
+    $xhr_reply
+  end
+
+  def self.execute_xhr
+    $xhr_block.call($holygrail_xhr_data)
+  end
+end
+
 module ActionController
   module Assertions
     module HolyGrail

@@ -7,11 +7,19 @@ class Rails
 end
 
 ActionController::Routing::Routes.draw do |map|
-  map.connect '/foo', :controller => 'holy_grails', :action => 'foo'
-  map.connect '/bar', :controller => 'holy_grails', :action => 'bar'
+  map.connect '/foo',     :controller => 'holy_grails', :action => 'foo'
+  map.connect '/bar',     :controller => 'holy_grails', :action => 'bar'
+  map.connect '/baz',     :controller => 'holy_grails', :action => 'baz'
+  map.connect '/baz_xhr', :controller => 'holy_grails', :action => 'baz_xhr'
 end
 
+ActionController::Base.session = {
+  :key    => "_myapp_session",
+  :secret => "some secret phrase" * 5
+}
+
 class HolyGrailsController < ActionController::Base
+
   def foo
     render :text => <<-HTML
       <html>
@@ -38,6 +46,87 @@ class HolyGrailsController < ActionController::Base
         </body>
       </html>
     HTML
+  end
+
+  def baz
+    render :text => <<-HTML
+      <html>
+        <head>
+          <script>
+            function call_ajax() {
+              var xhr = new XMLHttpRequest()
+              xhr.open("GET", "/baz_xhr", false) //false == synchronous
+              xhr.onreadystatechange = function() {
+                alert("onreadystatechange: " + this.readyState)
+                if (this.readyState != 4) { return }
+                alert("before getElementBYId")
+                alert(document.getElementById)
+                document.getElementById("xhr_result").innerHTML = this.responseText
+                alert(this.responseText)
+              }
+              xhr.send(null) // POST request sends data here
+            }
+            alert(window.location)
+          </script>
+        </head>
+        <body>
+          <div id="xhr_result">wrong</div>
+        </body>
+      </html>
+    HTML
+  end
+
+  def baz_xhr
+    render :text => "works"
+  end
+end
+
+class HolyGrailsIntegrationTest < ActionController::IntegrationTest
+
+  test "xhr calls controller" do
+    $xhr_block = lambda do |params|
+      p params["method"]
+      p params["url"]
+      send params["method"].downcase, params["url"]
+      $xhr_reply = @response.body.to_s
+    end
+
+    get "baz"
+    js("")
+
+    @__page.execute_js(<<-JS)
+      old_open = XMLHttpRequest.prototype.open
+
+      XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
+        Ruby.holygrail_xhr_data = {
+          method:   method,
+          url:      url,
+          async:    async,
+          username: username,
+          password: password
+        }
+      }
+
+      old_send = XMLHttpRequest.prototype.send
+
+      XMLHttpRequest.prototype.send = function(data) {
+        //for (key in this) { print(key + ": " + this[key]) }
+        Ruby.execute_xhr()
+        this.responseText = Ruby.xhr_reply()
+        // Also do response code
+        this.readyState = 4
+        this.onreadystatechange()
+      }
+    JS
+
+    js("call_ajax()")
+
+    puts js("window.harmony_request")
+
+    js(<<-JS)
+      foo = document.getElementById("xhr_result")
+    JS
+    assert_equal "works", js("foo.innerHTML")
   end
 end
 
