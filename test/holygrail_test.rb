@@ -86,8 +86,6 @@ class HolyGrailsIntegrationTest < ActionController::IntegrationTest
   end
 
   test "xhr calls controller" do
-    HolyGrail::XhrProxy.context = self
-
     get "baz"
 
     assert_equal "orig", js(<<-JS)

@@ -33,6 +33,7 @@ module ActionController
       #
       # @private
       def process(*args) #:nodoc:
+        ::HolyGrail::XhrProxy.context = self
         @__page = nil
         super
       end
