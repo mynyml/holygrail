@@ -53,80 +53,50 @@ class HolyGrailsController < ActionController::Base
       <html>
         <head>
           <script>
-            function call_ajax() {
+            function perform_xhr(method, url) {
               var xhr = new XMLHttpRequest()
-              xhr.open("GET", "/baz_xhr", false) //false == synchronous
+              xhr.open(method, url, false) //false == synchronous
               xhr.onreadystatechange = function() {
-                alert("onreadystatechange: " + this.readyState)
                 if (this.readyState != 4) { return }
-                alert("before getElementBYId")
-                alert(document.getElementById)
                 document.getElementById("xhr_result").innerHTML = this.responseText
-                alert(this.responseText)
               }
               xhr.send(null) // POST request sends data here
             }
-            alert(window.location)
           </script>
         </head>
         <body>
-          <div id="xhr_result">wrong</div>
+          <div id="xhr_result">orig</div>
         </body>
       </html>
     HTML
   end
 
   def baz_xhr
-    render :text => "works"
+    render :text => "xhr response"
   end
 end
 
 class HolyGrailsIntegrationTest < ActionController::IntegrationTest
 
+  # TODO test post xhr
+
+  test "api" do
+    assert_respond_to self, :execute_javascript
+    assert_respond_to self, :js
+  end
+
   test "xhr calls controller" do
-    $xhr_block = lambda do |params|
-      p params["method"]
-      p params["url"]
-      send params["method"].downcase, params["url"]
-      $xhr_reply = @response.body.to_s
-    end
+    HolyGrail::XhrProxy.context = self
 
     get "baz"
-    js("")
 
-    @__page.execute_js(<<-JS)
-      old_open = XMLHttpRequest.prototype.open
-
-      XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
-        Ruby.holygrail_xhr_data = {
-          method:   method,
-          url:      url,
-          async:    async,
-          username: username,
-          password: password
-        }
-      }
-
-      old_send = XMLHttpRequest.prototype.send
-
-      XMLHttpRequest.prototype.send = function(data) {
-        //for (key in this) { print(key + ": " + this[key]) }
-        Ruby.execute_xhr()
-        this.responseText = Ruby.xhr_reply()
-        // Also do response code
-        this.readyState = 4
-        this.onreadystatechange()
-      }
+    assert_equal "orig", js(<<-JS)
+      document.getElementById("xhr_result").innerHTML
     JS
-
-    js("call_ajax()")
-
-    puts js("window.harmony_request")
-
-    js(<<-JS)
-      foo = document.getElementById("xhr_result")
+    assert_equal "xhr response", js(<<-JS)
+      perform_xhr("GET", "/baz_xhr")
+      document.getElementById("xhr_result").innerHTML
     JS
-    assert_equal "works", js("foo.innerHTML")
   end
 end
 

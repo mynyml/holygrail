@@ -1,16 +1,17 @@
 require 'harmony'
 
-class Object
-  def self.holygrail_xhr_data=(value)
-    $holygrail_xhr_data = value
-  end
+module HolyGrail
+  class XhrProxy
+    class << self
+      attr_accessor :context
 
-  def self.xhr_reply
-    $xhr_reply
-  end
-
-  def self.execute_xhr
-    $xhr_block.call($holygrail_xhr_data)
+      def request(info, data="")
+        context.instance_eval do
+          send(info["method"].downcase, info["url"])
+          @response.body.to_s
+        end
+      end
+    end
   end
 end
 
@@ -55,12 +56,30 @@ module ActionController
       #   javascript code exception
       #
       def js(code)
-        @__page ||= Harmony::Page.new(rewrite_script_paths(@response.body.to_s))
+        @__page ||=
+          begin
+            page = Harmony::Page.new(rewrite_script_paths(@response.body.to_s))
+            page.execute_js(mock_xhr)
+            page
+          end
         @__page.execute_js(code)
       end
       alias :execute_javascript :js
 
       private
+
+      def mock_xhr
+        <<-JS
+        XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
+          this.info = { method: method, url: url }
+        }
+        XMLHttpRequest.prototype.send = function(data) {
+          this.responseText = Ruby.HolyGrail.XhrProxy.request(this.info, data)
+          this.readyState = 4
+          this.onreadystatechange()
+        }
+        JS
+      end
 
       # Rewrite relative src paths in <script> tags
       #
