@@ -32,8 +32,6 @@ end
 
 class IntegrationControllerTest < ActionController::IntegrationTest
 
-  # TODO test request identifies as xhr
-  #      headers['X-Requested-With'] = 'XMLHttpRequest'
   # TODO test xhr POST
   # TODO test xhr uris with initial "/"
   # TODO test xhr is mocked early, e.g. requests triggered on page load
@@ -55,6 +53,16 @@ class IntegrationControllerTest < ActionController::IntegrationTest
       perform_xhr("GET", "baz_xhr")
       document.getElementById("xhr_result").innerHTML
     JS
+  end
+
+  test "xhr identifes properly" do
+    get "baz"
+    assert_nil request.headers['X-Requested-With']
+
+    js(<<-JS)
+      perform_xhr("GET", "baz_xhr")
+    JS
+    assert_equal "XMLHttpRequest", request.headers['X-Requested-With']
   end
 end
 

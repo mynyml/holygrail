@@ -7,7 +7,7 @@ module HolyGrail
 
       def request(info, data="")
         context.instance_eval do
-          send(info["method"].downcase, info["url"])
+          xhr(info["method"].downcase, info["url"])
           @response.body.to_s
         end
       end
