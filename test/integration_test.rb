@@ -2,8 +2,7 @@ require 'test/test_helper'
 
 class IntegrationController < ActionController::Base
 
-  def perform_xhr_function
-    <<-JS
+  PERFORM_XHR_FUNCTION = <<-JS
     function perform_xhr(method, url) {
       var xhr = new XMLHttpRequest()
       xhr.open(method, url, false) //false == synchronous
@@ -13,14 +12,13 @@ class IntegrationController < ActionController::Base
       }
       xhr.send(null) // POST request sends data here
     }
-    JS
-  end
+  JS
 
   def baz
     render :text => <<-HTML
       <html>
         <head>
-          <script>#{perform_xhr_function}</script>
+          <script>#{PERFORM_XHR_FUNCTION}</script>
         </head>
         <body></body>
       </html>
@@ -31,7 +29,7 @@ class IntegrationController < ActionController::Base
     render :text => <<-HTML
       <html>
         <head>
-          <script>#{perform_xhr_function}</script>
+          <script>#{PERFORM_XHR_FUNCTION}</script>
           <script>
             window.onload = function() {
               perform_xhr("GET", "xhr")
