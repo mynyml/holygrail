@@ -34,10 +34,10 @@ Install
 
 Install the gem
 
-    # Note: there's a gem dependency bug in rubygems currently, so we'll have
-    # to install some dependencies manually. This will be fixed soon.
+    # There's a gem dependency bug in rubygems currently, so we'll have to
+    # install some dependencies manually. This will be fixed soon.
     gem install stackdeck
-    gem install johnson -v "2.0.0.pre0" #exact version matters
+    gem install johnson -v "2.0.0.pre3" #exact version matters
 
     gem install holygrail
 
