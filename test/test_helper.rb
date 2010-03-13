@@ -15,10 +15,11 @@ class Rails
 end
 
 ActionController::Routing::Routes.draw do |map|
-  map.connect '/foo',     :controller => 'functionals', :action => 'foo'
-  map.connect '/bar',     :controller => 'functionals', :action => 'bar'
-  map.connect '/baz',     :controller => 'integration', :action => 'baz'
-  map.connect '/baz_xhr', :controller => 'integration', :action => 'baz_xhr'
+  map.connect '/foo', :controller => 'functionals', :action => 'foo'
+  map.connect '/bar', :controller => 'functionals', :action => 'bar'
+  map.connect '/baz', :controller => 'integration', :action => 'baz'
+  map.connect '/xhr', :controller => 'integration', :action => 'xhr'
+  map.connect '/boo', :controller => 'integration', :action => 'boo'
 end
 
 ActionController::Base.session = {

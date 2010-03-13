@@ -1,15 +1,14 @@
 require 'harmony'
 
 module HolyGrail
-  class XhrProxy
-    class << self
-      attr_accessor :context
+  module XhrProxy
+    extend self
+    attr_accessor :context
 
-      def request(info, data="")
-        context.instance_eval do
-          xhr(info["method"].downcase, info["url"])
-          @response.body.to_s
-        end
+    def request(info, data="")
+      context.instance_eval do
+        xhr(info["method"].downcase, info["url"])
+        @response.body.to_s
       end
     end
   end
@@ -33,7 +32,6 @@ module ActionController
       #
       # @private
       def process(*args) #:nodoc:
-        #::HolyGrail::XhrProxy.context = self
         @__page = nil
         super
       end
@@ -57,21 +55,14 @@ module ActionController
       #   javascript code exception
       #
       def js(code)
-        @__page ||=
-          begin
-            ::HolyGrail::XhrProxy.context = self
-            page = Harmony::Page.new(rewrite_script_paths(@response.body.to_s))
-            page.execute_js(mock_xhr)
-            page
-          end
+        ::HolyGrail::XhrProxy.context = self
+        @__page ||= Harmony::Page.new(XHR_MOCK_SCRIPT + rewrite_script_paths(@response.body.to_s))
         @__page.execute_js(code)
       end
       alias :execute_javascript :js
 
-      private
-
-      def mock_xhr
-        <<-JS
+      XHR_MOCK_SCRIPT = <<-JS
+      <script>
         XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
           this.info = { method: method, url: url }
         }
@@ -80,8 +71,10 @@ module ActionController
           this.readyState = 4
           this.onreadystatechange()
         }
-        JS
-      end
+      </script>
+      JS
+
+      private
 
       # Rewrite relative src paths in <script> tags
       #

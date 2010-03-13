@@ -2,30 +2,48 @@ require 'test/test_helper'
 
 class IntegrationController < ActionController::Base
 
+  def perform_xhr_function
+    <<-JS
+    function perform_xhr(method, url) {
+      var xhr = new XMLHttpRequest()
+      xhr.open(method, url, false) //false == synchronous
+      xhr.onreadystatechange = function() {
+        if (this.readyState != 4) { return }
+        document.body.innerHTML = this.responseText
+      }
+      xhr.send(null) // POST request sends data here
+    }
+    JS
+  end
+
   def baz
     render :text => <<-HTML
       <html>
         <head>
-          <script>
-            function perform_xhr(method, url) {
-              var xhr = new XMLHttpRequest()
-              xhr.open(method, url, false) //false == synchronous
-              xhr.onreadystatechange = function() {
-                if (this.readyState != 4) { return }
-                document.getElementById("xhr_result").innerHTML = this.responseText
-              }
-              xhr.send(null) // POST request sends data here
-            }
-          </script>
+          <script>#{perform_xhr_function}</script>
         </head>
-        <body>
-          <div id="xhr_result">orig</div>
-        </body>
+        <body></body>
       </html>
     HTML
   end
 
-  def baz_xhr
+  def boo
+    render :text => <<-HTML
+      <html>
+        <head>
+          <script>#{perform_xhr_function}</script>
+          <script>
+            window.onload = function() {
+              perform_xhr("GET", "xhr")
+            }
+          </script>
+        </head>
+        <body></body>
+      </html>
+    HTML
+  end
+
+  def xhr
     render :text => "xhr response"
   end
 end
@@ -34,7 +52,6 @@ class IntegrationControllerTest < ActionController::IntegrationTest
 
   # TODO test xhr POST
   # TODO test xhr uris with initial "/"
-  # TODO test xhr is mocked early, e.g. requests triggered on page load
 
   test "api" do
     assert_respond_to self, :execute_javascript
@@ -44,25 +61,32 @@ class IntegrationControllerTest < ActionController::IntegrationTest
   ## xhr
 
   test "xhr calls controller" do
-    get "baz"
+    get 'baz'
 
-    assert_equal "orig", js(<<-JS)
-      document.getElementById("xhr_result").innerHTML
+    assert_equal "", js(<<-JS).gsub("\n",'').strip
+      document.body.innerHTML
     JS
     assert_equal "xhr response", js(<<-JS)
-      perform_xhr("GET", "baz_xhr")
-      document.getElementById("xhr_result").innerHTML
+      perform_xhr("GET", "xhr")
+      document.body.innerHTML
     JS
   end
 
   test "xhr identifes properly" do
-    get "baz"
+    get 'baz'
     assert_nil request.headers['X-Requested-With']
 
     js(<<-JS)
-      perform_xhr("GET", "baz_xhr")
+      perform_xhr("GET", "xhr")
     JS
-    assert_equal "XMLHttpRequest", request.headers['X-Requested-With']
+    assert_equal 'XMLHttpRequest', request.headers['X-Requested-With']
+  end
+
+  test "xhr is mocked early" do
+    get 'boo'
+    assert_equal "xhr response", js(<<-JS)
+      document.body.innerHTML
+    JS
   end
 end
 
