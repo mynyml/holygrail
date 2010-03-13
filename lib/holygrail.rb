@@ -33,7 +33,7 @@ module ActionController
       #
       # @private
       def process(*args) #:nodoc:
-        ::HolyGrail::XhrProxy.context = self
+        #::HolyGrail::XhrProxy.context = self
         @__page = nil
         super
       end
@@ -59,6 +59,7 @@ module ActionController
       def js(code)
         @__page ||=
           begin
+            ::HolyGrail::XhrProxy.context = self
             page = Harmony::Page.new(rewrite_script_paths(@response.body.to_s))
             page.execute_js(mock_xhr)
             page

@@ -5,7 +5,7 @@
 # Rules
 # --------------------------------------------------
 watch( '^test.*/.*_test\.rb'   )  {|m| ruby m[0] }
-watch( '^lib/(.*)\.rb'         )  {|m| ruby "test/#{m[1]}_test.rb" }
+watch( '^lib/(.*)\.rb'         )  { ruby tests }
 watch( '^rails/init\.rb'       )  { ruby tests }
 watch( '^test/test_helper\.rb' )  { ruby tests }
 
