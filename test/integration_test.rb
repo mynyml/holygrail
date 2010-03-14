@@ -3,14 +3,14 @@ require 'test/test_helper'
 class IntegrationController < ActionController::Base
 
   PERFORM_XHR_FUNCTION = <<-JS
-    function perform_xhr(method, url) {
+    function perform_xhr(method, url, data) {
       var xhr = new XMLHttpRequest()
       xhr.open(method, url, false) //false == synchronous
       xhr.onreadystatechange = function() {
         if (this.readyState != 4) { return }
         document.body.innerHTML = this.responseText
       }
-      xhr.send(null) // POST request sends data here
+      xhr.send(data) //POST request sends data here
     }
   JS
 
@@ -48,7 +48,6 @@ end
 
 class IntegrationControllerTest < ActionController::IntegrationTest
 
-  # TODO test xhr POST
   # TODO test xhr uris with initial "/"
 
   test "api" do
@@ -85,6 +84,14 @@ class IntegrationControllerTest < ActionController::IntegrationTest
     assert_equal "xhr response", js(<<-JS)
       document.body.innerHTML
     JS
+  end
+
+  test "xhr with post data" do
+    get 'baz'
+    js(<<-JS)
+      perform_xhr("GET", "xhr", "animove")
+    JS
+    assert_equal 'animove', request.body.read
   end
 end
 
