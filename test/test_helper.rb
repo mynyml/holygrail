@@ -18,8 +18,8 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '/foo', :controller => 'functionals', :action => 'foo'
   map.connect '/bar', :controller => 'functionals', :action => 'bar'
   map.connect '/baz', :controller => 'integration', :action => 'baz'
-  map.connect '/xhr', :controller => 'integration', :action => 'xhr'
   map.connect '/boo', :controller => 'integration', :action => 'boo'
+  map.connect '/xhr', :controller => 'integration', :action => 'xhr'
 end
 
 ActionController::Base.session = {

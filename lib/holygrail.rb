@@ -1,6 +1,8 @@
 require 'harmony'
 
 module HolyGrail
+
+  # This module allows routing ajax requests to rails controllers
   module XhrProxy
     extend self
     attr_accessor :context
@@ -13,7 +15,7 @@ module HolyGrail
     end
   end
 
-  module Assertions
+  module Extensions
     # Clear harmony page on every request.
     # Prevents changes to context from bleeding into the next one.
     #

@@ -48,8 +48,6 @@ end
 
 class IntegrationControllerTest < ActionController::IntegrationTest
 
-  # TODO test xhr uris with initial "/"
-
   test "api" do
     assert_respond_to self, :execute_javascript
     assert_respond_to self, :js
@@ -80,7 +78,7 @@ class IntegrationControllerTest < ActionController::IntegrationTest
   end
 
   test "xhr is mocked early" do
-    get 'boo'
+    get 'boo' #triggers ajax call on load
     assert_equal "xhr response", js(<<-JS)
       document.body.innerHTML
     JS
