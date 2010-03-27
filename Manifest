@@ -10,5 +10,6 @@ public/javascripts/application.js
 public/javascripts/foo.js
 rails/init.rb
 specs.watchr
-test/holygrail_test.rb
+test/functional_test.rb
+test/integration_test.rb
 test/test_helper.rb

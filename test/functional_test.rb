@@ -1,17 +1,7 @@
 require 'test/test_helper'
 
-class Rails
-  def self.root
-    Pathname(__FILE__).dirname.parent.expand_path
-  end
-end
+class FunctionalsController < ActionController::Base
 
-ActionController::Routing::Routes.draw do |map|
-  map.connect '/foo', :controller => 'holy_grails', :action => 'foo'
-  map.connect '/bar', :controller => 'holy_grails', :action => 'bar'
-end
-
-class HolyGrailsController < ActionController::Base
   def foo
     render :text => <<-HTML
       <html>
@@ -41,7 +31,8 @@ class HolyGrailsController < ActionController::Base
   end
 end
 
-class HolyGrailsControllerTest < ActionController::TestCase
+class FunctionalsControllerTest < ActionController::TestCase
+
   test "api" do
     assert_respond_to self, :execute_javascript
     assert_respond_to self, :js
