@@ -55,6 +55,7 @@ module HolyGrail
     def js(code)
       XhrProxy.context = self
       @__page ||= Harmony::Page.new(XHR_MOCK_SCRIPT + rewrite_script_paths(@response.body.to_s))
+      Harmony::Page::Window::BASE_RUNTIME.wait
       @__page.execute_js(code)
     end
     alias :execute_javascript :js

@@ -19,6 +19,7 @@ ActionController::Routing::Routes.draw do |map|
   map.connect '/bar', :controller => 'functionals', :action => 'bar'
   map.connect '/baz', :controller => 'integration', :action => 'baz'
   map.connect '/boo', :controller => 'integration', :action => 'boo'
+  map.connect '/moo', :controller => 'integration', :action => 'moo'
   map.connect '/xhr', :controller => 'integration', :action => 'xhr'
 end
 

@@ -41,6 +41,17 @@ class IntegrationController < ActionController::Base
     HTML
   end
 
+  def moo
+    render :text => <<-HTML
+      <html>
+        <head>
+          <script type="text/javascript" src="javascripts/jquery.js"></script>
+        </head>
+        <body></body>
+      </html>
+    HTML
+  end
+
   def xhr
     render :text => "xhr response"
   end
@@ -90,6 +101,18 @@ class IntegrationControllerTest < ActionController::IntegrationTest
       perform_xhr("GET", "xhr", "animove")
     JS
     assert_equal 'animove', request.body.read
+  end
+
+  test "xhr with jquery" do
+    get 'moo' #loads jquery.js
+    js(<<-JS)
+      $.get("/xhr", function(data, textStatus, xhr){
+        document.body.innerHTML = data
+      })
+    JS
+    assert_equal "xhr response", js(<<-JS).strip
+      document.body.innerHTML
+    JS
   end
 end
 

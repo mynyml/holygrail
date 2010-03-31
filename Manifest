@@ -8,6 +8,7 @@ holygrail.gemspec
 lib/holygrail.rb
 public/javascripts/application.js
 public/javascripts/foo.js
+public/javascripts/jquery.js
 rails/init.rb
 specs.watchr
 test/functional_test.rb
