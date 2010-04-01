@@ -12,9 +12,9 @@ HolyGrail is a [Harmony][20] plugin for Ruby on Rails.
 Examples
 --------
 
-Use the `js` method in your functional tests to execute javascript within the
-context of a view (the last response body). `js` returns the value of the last
-javascript statement, cast to an equivalent ruby object.
+Use the `js` method in your functional and integration tests to execute
+javascript within the context of a view (the last response body). `js` returns
+the value of the last javascript statement, cast to an equivalent ruby object.
 
     class PeopleControllerTest < ActionController::TestCase
 
@@ -28,6 +28,8 @@ javascript statement, cast to an equivalent ruby object.
         assert_equal  2,    js("document.getElementsByTagName('div').length")
       end
     end
+
+Ajax requests in integration tests will be handled as expected
 
 Install
 -------

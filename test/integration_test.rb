@@ -67,7 +67,7 @@ class IntegrationControllerTest < ActionController::IntegrationTest
   ## xhr
 
   test "xhr calls controller" do
-    get 'baz'
+    get '/baz'
 
     assert_equal "", js(<<-JS).gsub("\n",'').strip
       document.body.innerHTML
@@ -79,7 +79,7 @@ class IntegrationControllerTest < ActionController::IntegrationTest
   end
 
   test "xhr identifes properly" do
-    get 'baz'
+    get '/baz'
     assert_nil request.headers['X-Requested-With']
 
     js(<<-JS)
@@ -89,14 +89,14 @@ class IntegrationControllerTest < ActionController::IntegrationTest
   end
 
   test "xhr is mocked early" do
-    get 'boo' #triggers ajax call on load
+    get '/boo' #triggers ajax call on load
     assert_equal "xhr response", js(<<-JS)
       document.body.innerHTML
     JS
   end
 
   test "xhr with post data" do
-    get 'baz'
+    get '/baz'
     js(<<-JS)
       perform_xhr("GET", "xhr", "animove")
     JS
@@ -104,7 +104,7 @@ class IntegrationControllerTest < ActionController::IntegrationTest
   end
 
   test "xhr with jquery" do
-    get 'moo' #loads jquery.js
+    get '/moo' #loads jquery.js
     js(<<-JS)
       $.get("/xhr", function(data, textStatus, xhr){
         document.body.innerHTML = data
