@@ -3,10 +3,15 @@ require 'harmony'
 module HolyGrail
 
   # This module allows routing ajax requests to rails controllers
+  #
+  # @private
   module XhrProxy
     extend self
+
+    # Test object context (i.e. within test methods)
     attr_accessor :context
 
+    # Surrogate ajax request
     def request(info, data="")
       context.instance_eval do
         xhr(info["method"].downcase, info["url"], data)
@@ -16,6 +21,23 @@ module HolyGrail
   end
 
   module Extensions
+
+    # JS script to reroute ajax requests through XhrProxy
+    #
+    # @private
+    XHR_MOCK_SCRIPT = <<-JS
+    <script>
+      XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
+        this.info = { method: method, url: url }
+      }
+      XMLHttpRequest.prototype.send = function(data) {
+        this.responseText = Ruby.HolyGrail.XhrProxy.request(this.info, data)
+        this.readyState = 4
+        this.onreadystatechange()
+      }
+    </script>
+    JS
+
     # Clear harmony page on every request.
     # Prevents changes to context from bleeding into the next one.
     #
@@ -59,19 +81,6 @@ module HolyGrail
       @__page.execute_js(code)
     end
     alias :execute_javascript :js
-
-    XHR_MOCK_SCRIPT = <<-JS
-    <script>
-      XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
-        this.info = { method: method, url: url }
-      }
-      XMLHttpRequest.prototype.send = function(data) {
-        this.responseText = Ruby.HolyGrail.XhrProxy.request(this.info, data)
-        this.readyState = 4
-        this.onreadystatechange()
-      }
-    </script>
-    JS
 
     private
 
