@@ -76,13 +76,31 @@ module HolyGrail
     #
     def js(code)
       XhrProxy.context = self
-      @__page ||= Harmony::Page.new(XHR_MOCK_SCRIPT + rewrite_script_paths(@response.body.to_s))
+      @__page ||= Harmony::Page.new(XHR_MOCK_SCRIPT + referrer_mock_script + rewrite_script_paths(@response.body.to_s))
       Harmony::Page::Window::BASE_RUNTIME.wait
       @__page.execute_js(code)
     end
     alias :execute_javascript :js
 
     private
+
+    # Mock javascript to set document.referrer
+    #
+    # Sets the referrer using the value from @request.env['HTTP_REFERER'].
+    # If there is no HTTP_REFERER request header, no script is returned.
+    #
+    # @return [String]
+    #   HTML script element
+    #
+    def referrer_mock_script
+      return '' if @request.env['HTTP_REFERER'].nil?
+
+      <<-JS
+      <script>
+        document._referrer = #{@request.env['HTTP_REFERER'].to_json};
+      </script>
+      JS
+    end
 
     # Rewrite relative src paths in <script> tags
     #
