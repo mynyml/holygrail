@@ -86,5 +86,10 @@ class FunctionalsControllerTest < ActionController::TestCase
     get :foo
     assert_not_nil js('document.referrer')
   end
+
+  test "exposes URL anchors" do
+    get :foo, :anchor => 'foo_123'
+    assert_equal '#foo_123', js('window.location.hash')
+  end
 end
 
