@@ -76,7 +76,7 @@ module HolyGrail
     #
     def js(code)
       XhrProxy.context = self
-      @__page ||= Harmony::Page.fetch(document_url)
+      @__page ||= load_page
       Harmony::Page::Window::BASE_RUNTIME.wait
       @__page.execute_js(code)
     end
@@ -84,27 +84,26 @@ module HolyGrail
 
     private
 
-    # URL to the response document
+    # Load the Harmony Page
     #
-    # Writes the response body to a temp file and returns a file://
-    # URL to that temp file.
+    # Writes the response body to a temp file and returns a Harmony
+    # page built from that temp file.
     # If an anchor was specifed in the request that will be appended
     # to the URL.
     #
-    # @return [String]
-    #   URL of a file containing the response
+    # @return [Harmony::Page]
+    #   Harmony::Page built from the response
     #
-    def document_url
-      path = ''
+    def load_page
       Tempfile.open('holygrail') do |f|
         f << XHR_MOCK_SCRIPT + referrer_mock_script + rewrite_script_paths(@response.body.to_s)
-        path = f.path
+        f.close
+
+        url =  "file://#{f.path}"
+        url << "##{@request.parameters['anchor']}" if @request.parameters.has_key?('anchor')
+
+        return Harmony::Page.fetch(url)
       end
-
-      url =  "file://#{path}"
-      url << "##{@request.parameters['anchor']}" if @request.parameters.has_key?('anchor')
-
-      url
     end
 
     # Mock javascript to set document.referrer
