@@ -28,13 +28,13 @@ module HolyGrail
     XHR_MOCK_SCRIPT = <<-JS
     <script>
       XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
-        this.info = { method: method, url: url }
-      }
+        this.info = { method: method, url: url };
+      };
       XMLHttpRequest.prototype.send = function(data) {
-        this.responseText = Ruby.HolyGrail.XhrProxy.request(this.info, data)
-        this.readyState = 4
-        this.onreadystatechange()
-      }
+        this.responseText = Ruby.HolyGrail.XhrProxy.request(this.info, data);
+        this.readyState = 4;
+        this.onreadystatechange();
+      };
     </script>
     JS
 
