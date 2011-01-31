@@ -15,7 +15,7 @@ module HolyGrail
     def request(info, data="")
       context.instance_eval do
         xhr(info["method"].downcase, info["url"], data)
-        @response.body.to_s
+        [@response.body.to_s, @response.status.to_i]
       end
     end
   end
@@ -31,9 +31,15 @@ module HolyGrail
         this.info = { method: method, url: url };
       };
       XMLHttpRequest.prototype.send = function(data) {
-        this.responseText = Ruby.HolyGrail.XhrProxy.request(this.info, data);
+        var response = Ruby.HolyGrail.XhrProxy.request(this.info, data);
+        this.responseText = response[0];
+        this.status = response[1];
         this.readyState = 4;
         this.onreadystatechange();
+
+        if(this.status !== 200) {
+          alert("Warning: " + this.status + " response from XHR " + this.info.method + " " + this.info.url);
+        }
       };
     </script>
     JS
