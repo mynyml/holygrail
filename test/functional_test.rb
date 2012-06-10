@@ -74,5 +74,22 @@ class FunctionalsControllerTest < ActionController::TestCase
     assert_equal '/javascripts/application.js',
       js("document.getElementsByTagName('a')[0].href")
   end
+
+  test "sets the document referrer correctly" do
+    @request.env['HTTP_REFERER'] = 'http://example.com/page.html'
+    get :foo
+
+    assert_equal 'http://example.com/page.html', js("document.referrer")
+  end
+
+  test "not set the document referrer if there is no HTTP_REFERER header" do
+    get :foo
+    assert_not_nil js('document.referrer')
+  end
+
+  test "exposes URL anchors" do
+    get :foo, :anchor => 'foo_123'
+    assert_equal '#foo_123', js('window.location.hash')
+  end
 end
 

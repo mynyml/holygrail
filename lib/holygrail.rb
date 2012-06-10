@@ -15,7 +15,7 @@ module HolyGrail
     def request(info, data="")
       context.instance_eval do
         xhr(info["method"].downcase, info["url"], data)
-        @response.body.to_s
+        [@response.body.to_s, @response.status.to_i]
       end
     end
   end
@@ -28,13 +28,19 @@ module HolyGrail
     XHR_MOCK_SCRIPT = <<-JS
     <script>
       XMLHttpRequest.prototype.open = function(method, url, async, username, password) {
-        this.info = { method: method, url: url }
-      }
+        this.info = { method: method, url: url };
+      };
       XMLHttpRequest.prototype.send = function(data) {
-        this.responseText = Ruby.HolyGrail.XhrProxy.request(this.info, data)
-        this.readyState = 4
-        this.onreadystatechange()
-      }
+        var response = Ruby.HolyGrail.XhrProxy.request(this.info, data);
+        this.responseText = response[0];
+        this.status = response[1];
+        this.readyState = 4;
+        this.onreadystatechange();
+
+        if(this.status !== 200) {
+          alert("Warning: " + this.status + " response from XHR " + this.info.method + " " + this.info.url);
+        }
+      };
     </script>
     JS
 
@@ -76,13 +82,53 @@ module HolyGrail
     #
     def js(code)
       XhrProxy.context = self
-      @__page ||= Harmony::Page.new(XHR_MOCK_SCRIPT + rewrite_script_paths(@response.body.to_s))
+      @__page ||= load_page
       Harmony::Page::Window::BASE_RUNTIME.wait
       @__page.execute_js(code)
     end
     alias :execute_javascript :js
 
     private
+
+    # Load the Harmony Page
+    #
+    # Writes the response body to a temp file and returns a Harmony
+    # page built from that temp file.
+    # If an anchor was specifed in the request that will be appended
+    # to the URL.
+    #
+    # @return [Harmony::Page]
+    #   Harmony::Page built from the response
+    #
+    def load_page
+      Tempfile.open('holygrail') do |f|
+        f << XHR_MOCK_SCRIPT + referrer_mock_script + rewrite_script_paths(@response.body.to_s)
+        f.close
+
+        url =  "file://#{f.path}"
+        url << "##{@request.parameters['anchor']}" if @request.parameters.has_key?('anchor')
+
+        return Harmony::Page.fetch(url)
+      end
+    end
+
+    # Mock javascript to set document.referrer
+    #
+    # Sets the referrer using the value from @request.env['HTTP_REFERER'].
+    # If there is no HTTP_REFERER request header, no script is returned.
+    #
+    # @return [String]
+    #   HTML script element
+    #
+    def referrer_mock_script
+      return '' if @request.env['HTTP_REFERER'].nil?
+
+      <<-JS
+      <script>
+        document._referrer = #{@request.env['HTTP_REFERER'].to_json};
+      </script>
+      JS
+    end
 
     # Rewrite relative src paths in <script> tags
     #

@@ -3,7 +3,7 @@ require 'action_controller'
 require 'action_controller/integration'
 
 begin require 'ruby-debug'; rescue LoadError; end
-begin require 'redgreen';   rescue LoadError; end
+begin require 'redgreen' unless ENV['TM_FILENAME']; rescue LoadError; end
 begin require 'phocus';     rescue LoadError; end
 
 require 'rails/init'
